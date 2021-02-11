@@ -1,7 +1,8 @@
 // Wasserkuehlung 3D-Drucker by @woodworking.dennis
 // Feb. 2021
 
-#include <MCP3XXX.h>
+#include <SPI.h>
+#include <Mcp320x.h>
 
 #define RELAY         32
 
@@ -35,17 +36,18 @@
 #define PWMFREQ       5000
 #define PWMRES        8
 
+#define ADC_VREF      3300
+#define ADC_CLK       1600000
+
 int pwm1speed   =     0;
 int pwm2speed   =     0;
 int pwm3speed   =     0;
 
-typedef MCP3XXX_<10, 8, 50000> MCP3208;
-MCP3008 mcp3208;
+
+MCP3208 mcp3208(ADC_VREF, CSMCP);
 
 void setup() {
   Serial.begin(115200);
-  
-  mcp3208.begin(CSMCP, MOSI, MISO, CLK);
   
   Serial.println("ESP32 started");
 
@@ -64,13 +66,98 @@ void setup() {
   pinMode(RELAY, OUTPUT);
   digitalWrite(RELAY, LOW);
 
+  pinMode(CSMCP, OUTPUT);
+  digitalWrite(CSMCP, HIGH);
+
+  SPISettings settings(ADC_CLK, MSBFIRST, SPI_MODE0);
+  SPI.begin();
+  SPI.beginTransaction(settings);
+
 }
 
 void loop() {
+  uint32_t t1;
+  uint32_t t2;
+  
+  Serial.println("Reading...");
 
-  Serial.println(mcp3208.analogRead(0));
+//  t1 = micros();
+  uint16_t raw = mcp3208.read(MCP3208::Channel::SINGLE_0);
+//  t2 = micros();
+
+  uint16_t val = mcp3208.toAnalog(raw);
+
+  Serial.print("value 1: ");
+  Serial.print(raw);
+  Serial.print(" (");
+  Serial.print(val);
+  Serial.println(" mV)");
+
+
+  raw = mcp3208.read(MCP3208::Channel::SINGLE_1);
+  val = mcp3208.toAnalog(raw);
+  Serial.print("value 2: ");
+  Serial.print(raw);
+  Serial.print(" (");
+  Serial.print(val);
+  Serial.println(" mV)");
+
+  raw = mcp3208.read(MCP3208::Channel::SINGLE_2);
+  val = mcp3208.toAnalog(raw);
+  Serial.print("value 3: ");
+  Serial.print(raw);
+  Serial.print(" (");
+  Serial.print(val);
+  Serial.println(" mV)");
+
+  raw = mcp3208.read(MCP3208::Channel::SINGLE_3);
+  val = mcp3208.toAnalog(raw);
+  Serial.print("value 4: ");
+  Serial.print(raw);
+  Serial.print(" (");
+  Serial.print(val);
+  Serial.println(" mV)");
+
+  raw = mcp3208.read(MCP3208::Channel::SINGLE_4);
+  val = mcp3208.toAnalog(raw);
+  Serial.print("value 5: ");
+  Serial.print(raw);
+  Serial.print(" (");
+  Serial.print(val);
+  Serial.println(" mV)");
+
+  raw = mcp3208.read(MCP3208::Channel::SINGLE_5);
+  val = mcp3208.toAnalog(raw);
+  Serial.print("value 6: ");
+  Serial.print(raw);
+  Serial.print(" (");
+  Serial.print(val);
+  Serial.println(" mV)");
+
+  raw = mcp3208.read(MCP3208::Channel::SINGLE_6);
+  val = mcp3208.toAnalog(raw);
+  Serial.print("value 7: ");
+  Serial.print(raw);
+  Serial.print(" (");
+  Serial.print(val);
+  Serial.println(" mV)");  
+
+  raw = mcp3208.read(MCP3208::Channel::SINGLE_7);
+  val = mcp3208.toAnalog(raw);
+  Serial.print("value 8: ");
+  Serial.print(raw);
+  Serial.print(" (");
+  Serial.print(val);
+  Serial.println(" mV)");      
+  
+/*  Serial.print("Sampling time: ");
+  Serial.print(static_cast<double>(t2 - t1) / 1000, 4);
+  Serial.println("ms");
+*/
+/*  Serial.println(mcp3208.analogRead(0));
   Serial.println("-----");
-/*  Serial.println(mcp3208.analogRead(1));
+  Serial.println(mcp3208.analogRead(1));
+  Serial.println("-----");  
   Serial.println("-----");  
   Serial.println(mcp3208.analogRead(2));
   Serial.println("-----");
@@ -87,6 +174,6 @@ void loop() {
   Serial.println("-----");
   Serial.println("-----");
 */
-  delay(500);
+  delay(2000);
 
 }
