@@ -154,26 +154,7 @@ void loop() {
   Serial.print(static_cast<double>(t2 - t1) / 1000, 4);
   Serial.println("ms");
 */
-/*  Serial.println(mcp3208.analogRead(0));
-  Serial.println("-----");
-  Serial.println(mcp3208.analogRead(1));
-  Serial.println("-----");  
-  Serial.println("-----");  
-  Serial.println(mcp3208.analogRead(2));
-  Serial.println("-----");
-  Serial.println(mcp3208.analogRead(3));
-  Serial.println("-----"); 
-  Serial.println(mcp3208.analogRead(4));
-  Serial.println("-----");
-  Serial.println(mcp3208.analogRead(5));
-  Serial.println("-----");
-  Serial.println(mcp3208.analogRead(6));
-  Serial.println("-----");
-  Serial.println(mcp3208.analogRead(7));
-  Serial.println("-----");
-  Serial.println("-----");
-  Serial.println("-----");
-*/
+
   delay(2000);
 
 }
