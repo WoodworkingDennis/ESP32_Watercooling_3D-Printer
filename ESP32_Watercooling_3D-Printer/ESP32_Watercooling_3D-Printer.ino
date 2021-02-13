@@ -69,6 +69,15 @@ void setup() {
   pinMode(CSMCP, OUTPUT);
   digitalWrite(CSMCP, HIGH);
 
+  pinMode(CSTOUCH, OUTPUT);
+  digitalWrite(CSTOUCH, HIGH);
+
+  pinMode(CSDISPLAY, OUTPUT);
+  digitalWrite(CSDISPLAY, HIGH);
+
+  pinMode(CSSD, OUTPUT);
+  digitalWrite(CSSD, HIGH);
+
   SPISettings settings(ADC_CLK, MSBFIRST, SPI_MODE0);
   SPI.begin();
   SPI.beginTransaction(settings);
