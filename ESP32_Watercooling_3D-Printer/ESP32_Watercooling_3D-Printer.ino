@@ -10,7 +10,7 @@
 #define A             5
 #define B             13
 
-#define TOUCH         14
+#define INTTOUCH      14
 
 #define CSMCP         2
 #define CSTOUCH       15
@@ -33,6 +33,8 @@
 #define PWM3          27
 #define PWM3CHAN      2
 
+#define DCDISPLAY     33
+
 #define PWMFREQ       5000
 #define PWMRES        8
 
@@ -43,65 +45,23 @@ int pwm1speed   =     0;
 int pwm2speed   =     0;
 int pwm3speed   =     0;
 
+uint16_t raw;     //MCP3208
+uint16_t val;     //MCP3208
+
 
 MCP3208 mcp3208(ADC_VREF, CSMCP);
 
-void setup() {
-  Serial.begin(115200);
-  
-  Serial.println("ESP32 started");
 
-  ledcSetup(PWM1CHAN, PWMFREQ, PWMRES);
-  ledcAttachPin(PWM1, PWM1CHAN);
-  ledcWrite(PWM1CHAN, pwm1speed);
-
-  ledcSetup(PWM2CHAN, PWMFREQ, PWMRES);
-  ledcAttachPin(PWM2, PWM2CHAN);
-  ledcWrite(PWM2CHAN, pwm2speed);
-
-  ledcSetup(PWM3CHAN, PWMFREQ, PWMRES);
-  ledcAttachPin(PWM3, PWM3CHAN);
-  ledcWrite(PWM3CHAN, pwm3speed);
-
-  pinMode(RELAY, OUTPUT);
-  digitalWrite(RELAY, LOW);
-
-  pinMode(CSMCP, OUTPUT);
-  digitalWrite(CSMCP, HIGH);
-
-  pinMode(CSTOUCH, OUTPUT);
-  digitalWrite(CSTOUCH, HIGH);
-
-  pinMode(CSDISPLAY, OUTPUT);
-  digitalWrite(CSDISPLAY, HIGH);
-
-  pinMode(CSSD, OUTPUT);
-  digitalWrite(CSSD, HIGH);
-
-  SPISettings settings(ADC_CLK, MSBFIRST, SPI_MODE0);
-  SPI.begin();
-  SPI.beginTransaction(settings);
-
-}
-
-void loop() {
-  uint32_t t1;
-  uint32_t t2;
-  
+void checkTemp(){
   Serial.println("Reading...");
-
-//  t1 = micros();
-  uint16_t raw = mcp3208.read(MCP3208::Channel::SINGLE_0);
-//  t2 = micros();
-
-  uint16_t val = mcp3208.toAnalog(raw);
-
+  
+  raw = mcp3208.read(MCP3208::Channel::SINGLE_0);
+  val = mcp3208.toAnalog(raw);
   Serial.print("value 1: ");
   Serial.print(raw);
   Serial.print(" (");
   Serial.print(val);
   Serial.println(" mV)");
-
 
   raw = mcp3208.read(MCP3208::Channel::SINGLE_1);
   val = mcp3208.toAnalog(raw);
@@ -157,13 +117,49 @@ void loop() {
   Serial.print(raw);
   Serial.print(" (");
   Serial.print(val);
-  Serial.println(" mV)");      
+  Serial.println(" mV)");
+}
+
+
+void setup() {
+  Serial.begin(115200);
   
-/*  Serial.print("Sampling time: ");
-  Serial.print(static_cast<double>(t2 - t1) / 1000, 4);
-  Serial.println("ms");
-*/
+  Serial.println("ESP32 started");
 
+  ledcSetup(PWM1CHAN, PWMFREQ, PWMRES);
+  ledcAttachPin(PWM1, PWM1CHAN);
+  ledcWrite(PWM1CHAN, pwm1speed);
+
+  ledcSetup(PWM2CHAN, PWMFREQ, PWMRES);
+  ledcAttachPin(PWM2, PWM2CHAN);
+  ledcWrite(PWM2CHAN, pwm2speed);
+
+  ledcSetup(PWM3CHAN, PWMFREQ, PWMRES);
+  ledcAttachPin(PWM3, PWM3CHAN);
+  ledcWrite(PWM3CHAN, pwm3speed);
+
+  pinMode(RELAY, OUTPUT);
+  digitalWrite(RELAY, LOW);
+
+  pinMode(CSMCP, OUTPUT);
+  digitalWrite(CSMCP, HIGH);
+
+  pinMode(CSTOUCH, OUTPUT);
+  digitalWrite(CSTOUCH, HIGH);
+
+  pinMode(CSDISPLAY, OUTPUT);
+  digitalWrite(CSDISPLAY, HIGH);
+
+  pinMode(CSSD, OUTPUT);
+  digitalWrite(CSSD, HIGH);
+
+  SPISettings settings(ADC_CLK, MSBFIRST, SPI_MODE0);
+  SPI.begin();
+  SPI.beginTransaction(settings);
+
+}
+
+void loop() {      
+  checkTemp();
   delay(2000);
-
 }
