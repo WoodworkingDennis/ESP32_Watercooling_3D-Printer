@@ -3,12 +3,14 @@
 
 #include <SPI.h>
 #include <Mcp320x.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_ILI9341.h>
 
 #define RELAY         32
 
-#define SW            4
-#define A             5
-#define B             13
+#define ENCODER_SW    4
+#define ENCODER_DT    5
+#define ENCODER_CLK   13
 
 #define INTTOUCH      14
 
@@ -33,7 +35,8 @@
 #define PWM3          27
 #define PWM3CHAN      2
 
-#define DCDISPLAY     33
+#define TFT_DC        33
+#define TFT_RST       -1
 
 #define PWMFREQ       5000
 #define PWMRES        8
@@ -51,6 +54,7 @@ uint16_t val;     //MCP3208
 
 MCP3208 mcp3208(ADC_VREF, CSMCP);
 
+Adafruit_ILI9341 tft = Adafruit_ILI9341(CSDISPLAY, TFT_DC, MOSI, CLK, TFT_RST, MISO);
 
 void checkTemp(){
   Serial.println("Reading...");
@@ -156,6 +160,8 @@ void setup() {
   SPISettings settings(ADC_CLK, MSBFIRST, SPI_MODE0);
   SPI.begin();
   SPI.beginTransaction(settings);
+
+  tft.begin();
 
 }
 
